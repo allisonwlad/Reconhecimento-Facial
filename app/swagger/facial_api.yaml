@@ -1,0 +1,137 @@
+swagger: "2.0"
+
+info:
+  version: "1.0"
+  title: API Reconhecimento Facial
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+basePath: "/facial"
+paths:
+  /usuarios:
+    get:
+      operationId: api.users.get_users
+      summary: 'Retorna todos os usuários com credenciais faciais cadastradas'
+      responses:
+        200:
+          description: 'Usuário encontrado'
+          schema:
+            type: object
+            properties:
+              user:
+                type: array
+                items:
+                  $ref: '#/definitions/usuariosRetorno'
+        404:
+          description: 'Usuário não encontrado'
+          schema:
+            $ref: '#/definitions/MensagensErro'
+  /usuarios/{idUsuario}:
+    get:
+      operationId: api.users.get_user
+      summary: 'Retorna um usuário pelo idUsuario'
+      parameters:
+      - name : "idUsuario"
+        in: path
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Lista de retorno dos usuários"
+          schema:
+            $ref: "#/definitions/usuariosRetorno"
+        404:
+          description: "Usuário não encontrado"
+    post:
+      summary: Adiciona um novo usuário ao serviço
+      description: Cadastro de usuário de reconhecimento facial
+      operationId: api.users.add_user
+      responses:
+        201:
+          description: Usuário cadastrado
+        409: 
+          description: Usuário com esse Id já existe
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: usuario
+          in: body
+          required: true
+          description: Novo usuário do serviço
+          schema:
+            $ref: '#/definitions/usuariosEntrada'
+  /usuarios/{idUsuario}/reconhecer:
+    post:
+      description: Realiza o reconhecimento facial da base com a foto de entrada
+      operationId: api.users.user_auth
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: usuario
+          in: body
+          required: true
+          description: Novo usuário do serviço
+          schema:
+            $ref: '#/definitions/usuariosEntrada'
+      responses:
+        200:
+          description: 'Usuário autenticado'
+          schema:
+            $ref: '#/definitions/usuariosRetorno'
+        400:
+          description: 'Usuário não autenticado'
+definitions:
+  usuariosEntrada:
+    type: object
+    properties:
+      idUsuario:
+        type: integer
+      cooperativa:
+        type: integer
+      conta:
+        type: integer
+      nome:
+        type: string
+      imagem:
+        type: string
+  usuariosRetorno:
+    type: object
+    properties:
+      idUsuario:
+        type: integer
+      cooperativa:
+        type: integer
+      conta:
+        type: integer
+      nome:
+        type: string
+      fullpath:
+        type: string
+  MensagensErro:
+    type: object
+    properties:
+      mensagens:
+        type: array
+        items:
+          $ref: '#/definitions/SicoobMensagem'
+        description: Array com todas as mensagens de erros encontrados
+  SicoobMensagem:
+    type: object
+    properties:
+      mensagem:
+        type: string
+        description: Mensagem que descreve o erro
+      codigo:
+        type: string
+        description: Código interno que identifica o erro.
+    required:
+      - mensagem 
+      - codigo 
