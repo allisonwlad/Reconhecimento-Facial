@@ -1,9 +1,5 @@
 FROM debian:9
 
-ENV http_proxy='http://allison.cavalcante:W9q4x6r2@192.168.100.178:80'
-ENV https_proxy='https://allison.cavalcante:W9q4x6r2@192.168.100.178:80'
-ENV ftp_proxy='http://allison.cavalcante:W9q4x6r2@192.168.100.178:80'
-
 USER root
 
 RUN apt-get update 
